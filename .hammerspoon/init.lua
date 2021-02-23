@@ -26,9 +26,7 @@ hs.hotkey.bind(mash, 'm', function() hs.window.focusedWindow():move(units.maximu
 --   最後に ';' がバッファに残ることがあるので、escape で削除する
 --
 hs.hotkey.bind({'ctrl'}, '[', function()
-  hs.eventtap.keyStroke({}, 'escape', 1000)
-  hs.eventtap.keyStroke({}, 'escape', 1000)
-  hs.eventtap.keyStroke({}, 'escape', 1000)
+  for i = 1, 3 do hs.eventtap.keyStroke({}, 'escape', 1000) end
   hs.eventtap.keyStroke({'ctrl', 'shift'}, ';', 1000)
   hs.eventtap.keyStroke({}, 'escape', 1000)
 end)
