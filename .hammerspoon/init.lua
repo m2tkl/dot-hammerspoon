@@ -26,6 +26,34 @@ for _, unit in pairs(units) do
 end
 
 
+--
+-- アプリケーションWindowのScreen間の移動
+--
+function moveWindowToNextScreen()
+  return function()
+    -- 使用可能なスクリーン一覧を取得
+    local screens = hs.screen.allScreens()
+    local screenIndex = {}
+    for i, screen in ipairs(screens) do
+      screenIndex[screen:id()] = i
+    end
+
+    -- 今フォーカスしているアプリケーションとスクリーンのIdを取得
+    local focusedWindow = hs.window.focusedWindow()
+    local focusedScreenId = focusedWindow:screen():id()
+
+    -- 移動先スクリーンのインデックスをセット
+    local nextIndex = screenIndex[focusedScreenId] + 1
+    if nextIndex > #screens then
+      nextIndex = 1
+    end
+
+    -- ウィンドウを次のスクリーンに移動
+    focusedWindow:moveToScreen(screens[nextIndex], false, true)
+
+  end
+end
+hs.hotkey.bind({'ctrl', 'option', 'cmd'}, 'n', moveWindowToNextScreen())
 
 --
 -- ctrl + [ で escape & 日本語入力をOff
