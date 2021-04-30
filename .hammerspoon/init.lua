@@ -33,12 +33,14 @@ function moveWindowToNextScreen()
   return function()
     -- 使用可能なスクリーン一覧を取得
     local screens = hs.screen.allScreens()
+
+    -- スクリーンのIDとスクリーン配列のインデックスを紐付け
     local screenIndex = {}
     for i, screen in ipairs(screens) do
       screenIndex[screen:id()] = i
     end
 
-    -- 今フォーカスしているアプリケーションとスクリーンのIdを取得
+    -- 今フォーカスしているアプリケーションとスクリーンのIDを取得
     local focusedWindow = hs.window.focusedWindow()
     local focusedScreenId = focusedWindow:screen():id()
 
@@ -55,14 +57,15 @@ function moveWindowToNextScreen()
 end
 hs.hotkey.bind({'ctrl', 'option', 'cmd'}, 'n', moveWindowToNextScreen())
 
+
 --
 -- ctrl + [ で escape & 日本語入力をOff
 --   1. 日本語入力途中でも確実にモード切り替えするために2回escape
 --   2. 3回目のescapeでins modeからcmd modeに切り替え
---   3. ctrl + shift + ; はIME切り替えのショートカット（MacのIMEの機能）
+--   3. ctrl + shift + ; はIME切り替えのショートカット（MacのIMEの機能であり、他のIMEでは異なる可能性あり）
 --   4. 最後に ';' がバッファに残ることがあるので、escape で削除する
 --  
---   Escapeキーで同じことをすると、Escapeが再起的に呼ばれ、無限ループに陥るため注意
+--   Escapeキーで同じことをすると、Escapeが再起的に呼ばれ無限ループに陥るため注意
 --
 hs.hotkey.bind({'ctrl'}, '[', function()
   for i = 1, 3 do hs.eventtap.keyStroke({}, 'escape', 1000) end
