@@ -3,35 +3,38 @@
 -- 
 hs.window.animationDuration = 0
 units = {
-  right50       = { x = 0.50, y = 0.00, w = 0.50, h = 1.00 },
-  left50        = { x = 0.00, y = 0.00, w = 0.50, h = 1.00 },
-  top50         = { x = 0.00, y = 0.00, w = 1.00, h = 0.50 },
-  bot50         = { x = 0.00, y = 0.50, w = 1.00, h = 0.50 },
-  maximum       = { x = 0.00, y = 0.00, w = 1.00, h = 1.00 },
-  topleft       = { x = 0.00, y = 0.00, w = 0.50, h = 0.50 },
-  topright      = { x = 0.50, y = 0.00, w = 0.50, h = 0.50 },
-  botleft    = { x = 0.00, y = 0.50, w = 0.50, h = 0.50 },
-  botright   = { x = 0.50, y = 0.50, w = 0.50, h = 0.50 }
+  right50   = { key = 'right', pos = { x = 0.50, y = 0.00, w = 0.50, h = 1.00 } },
+  left50    = { key = 'left',  pos = { x = 0.00, y = 0.00, w = 0.50, h = 1.00 } },
+  top50     = { key = 'up',    pos = { x = 0.00, y = 0.00, w = 1.00, h = 0.50 } },
+  bot50     = { key = 'down',  pos = { x = 0.00, y = 0.50, w = 1.00, h = 0.50 } },
+  maximum   = { key = 'm',     pos = { x = 0.00, y = 0.00, w = 1.00, h = 1.00 } },
+  topleft   = { key = '1',     pos = { x = 0.00, y = 0.00, w = 0.50, h = 0.50 } },
+  topright  = { key = '2',     pos = { x = 0.50, y = 0.00, w = 0.50, h = 0.50 } },
+  botleft   = { key = '3',     pos = { x = 0.00, y = 0.50, w = 0.50, h = 0.50 } },
+  botright  = { key = '4',     pos = { x = 0.50, y = 0.50, w = 0.50, h = 0.50 } },
 }
 
-mash = {'option', 'ctrl', 'cmd'}
-hs.hotkey.bind(mash, 'right', function() hs.window.focusedWindow():move(units.right50, nil, true) end)
-hs.hotkey.bind(mash, 'left',  function() hs.window.focusedWindow():move(units.left50, nil, true) end)
-hs.hotkey.bind(mash, 'up',    function() hs.window.focusedWindow():move(units.top50, nil, true) end)
-hs.hotkey.bind(mash, 'down',  function() hs.window.focusedWindow():move(units.bot50, nil, true) end)
-hs.hotkey.bind(mash, 'm',     function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
-hs.hotkey.bind(mash, '1',     function() hs.window.focusedWindow():move(units.topleft, nil, true) end)
-hs.hotkey.bind(mash, '2',     function() hs.window.focusedWindow():move(units.topright, nil, true) end)
-hs.hotkey.bind(mash, '3',     function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
-hs.hotkey.bind(mash, '4',     function() hs.window.focusedWindow():move(units.botright, nil, true) end)
+function moveFocusedWindow(position)
+  return function()
+    hs.window.focusedWindow():move(position, nil, true)
+  end
+end
+
+mash = {'ctrl', 'option', 'cmd'}
+for _, unit in pairs(units) do
+  hs.hotkey.bind(mash, unit.key, moveFocusedWindow(unit.pos))
+end
+
 
 
 --
 -- ctrl + [ で escape & 日本語入力をOff
---   日本語入力途中でも確実にモード切り替えするために2回escape
---   3回目のescapeでins modeからcmd modeに切り替え
---   ctrl + shift + ; はIME切り替えのショートカット（MacのIMEの機能）
---   最後に ';' がバッファに残ることがあるので、escape で削除する
+--   1. 日本語入力途中でも確実にモード切り替えするために2回escape
+--   2. 3回目のescapeでins modeからcmd modeに切り替え
+--   3. ctrl + shift + ; はIME切り替えのショートカット（MacのIMEの機能）
+--   4. 最後に ';' がバッファに残ることがあるので、escape で削除する
+--  
+--   Escapeキーで同じことをすると、Escapeが再起的に呼ばれ、無限ループに陥るため注意
 --
 hs.hotkey.bind({'ctrl'}, '[', function()
   for i = 1, 3 do hs.eventtap.keyStroke({}, 'escape', 1000) end
