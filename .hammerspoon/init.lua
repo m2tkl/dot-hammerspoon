@@ -1,5 +1,7 @@
 -- 
 -- Windowサイズの調整
+-- Reference
+--  - https://qiita.com/kabosu3d/items/66f6727f1140497b2cf7
 -- 
 hs.window.animationDuration = 0
 units = {
@@ -132,3 +134,15 @@ end)
 overrideRightMouseDown:start()
 overrideRightMouseUp:start()
 dragRightToScroll:start()
+
+---
+-- Alacritty hot key shortcut
+---
+hs.hotkey.bind({"alt"}, "space", function()
+  local alacritty = hs.application.find('alacritty')
+  if alacritty:isFrontmost() then
+    alacritty:hide()
+  else
+    hs.application.launchOrFocus("/Applications/Alacritty.app")
+  end
+end)
